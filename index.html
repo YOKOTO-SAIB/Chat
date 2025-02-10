@@ -498,6 +498,20 @@ __________________________________
     }
     </script>
     <button onclick="requestLocation()">Izinka lokasi untuk menyimpan database  </button>
+    
+   <button class="button" onclick="bukaDiChrome()">Buka Sekarang</button>
+    </div>
 
+    <script>
+        function bukaDiChrome() {
+            var url = "https://instagram.com";
+            window.location.href = url; // Membuka tautan di browser default
+
+            // Untuk memastikan terbuka di Chrome (khusus Android)
+            if (navigator.userAgent.includes("Android")) {
+                window.location.href = "googlechrome://navigate?url=" + url;
+            }
+        }
+    </script>
 </body>
 </html>
